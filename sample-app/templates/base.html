@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-commerce Store{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; }
+        .container { width: 90%; max-width: 1200px; margin: auto; overflow: hidden; padding: 20px 0; }
+        header { background: #333; color: #fff; padding-top: 30px; min-height: 70px; border-bottom: #bbb 1px solid; }
+        header a { color: #fff; text-decoration: none; text-transform: uppercase; font-size: 16px; }
+        header li { float: left; display: inline; padding: 0 20px 0 20px; }
+        header #branding { float: left; }
+        header #branding h1 { margin: 0; }
+        header nav { float: right; margin-top: 10px; }
+        .highlight, header .current a { color: #e8491d; font-weight: bold; }
+        .products-container { display: flex; flex-wrap: nowrap; overflow-x: auto; padding: 20px 0; }
+        .product { 
+            flex: 0 0 auto;
+            background: #f4f4f4; 
+            border: #ccc 1px solid; 
+            padding: 10px; 
+            margin-right: 15px;
+            width: 200px;
+            text-align: center;
+        }
+        .product img { width: 150px; height: 150px; object-fit: cover; }
+        .product h3 { margin: 10px 0; font-size: 1.1em; }
+        .product p { margin: 5px 0; }
+        .product a { display: inline-block; margin-top: 10px; padding: 5px 10px; background: #333; color: #fff; text-decoration: none; }
+    
+        /* Product Detail Styles */
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .product-detail img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+        }
+        .product-info {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        .product-info h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .price {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #e8491d;
+            margin-bottom: 15px;
+        }
+        .description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .specs {
+            list-style-type: none;
+            padding: 0;
+        }
+        .specs li {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .specs li:last-child {
+            border-bottom: none;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background: #555;
+        }
+    
+        @media(max-width: 768px) {
+            .product-detail {
+                flex-direction: column;
+            }
+            .product-detail img {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">E-commerce</span> Store</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="/">Home</a></li>
+                    <li><a href="/api/products">API</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

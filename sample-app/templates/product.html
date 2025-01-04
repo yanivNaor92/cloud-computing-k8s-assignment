@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - E-commerce Store{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="product-detail">
+        <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}">
+        <div class="product-info">
+            <h2>{{ product.name }}</h2>
+            <p class="price">Price: ${{ product.price }}</p>
+            <p class="availability">
+                Availability: 
+                {% if is_available %}
+                    <span style="color: green;">In Stock</span>
+                {% else %}
+                    <span style="color: red;">Out of Stock</span>
+                {% endif %}
+            </p>
+            <p class="description">{{ product.description }}</p>
+            <h3>Specifications:</h3>
+            <ul class="specs">
+                {% for key, value in product.specs.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <a href="{{ url_for('home') }}" class="back-button">Back to Products</a>
+</div>
+{% endblock %}

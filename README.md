@@ -23,8 +23,8 @@ Before continuing to the tasks, ensure the following tools are installed on your
 To access the files in this repository you should first clone it to your local computer.
 
 ```shell
-git clone https://github.wdf.sap.corp/I530573/cloud-computing-home-assignment.git
-cd cloud-computing-home-assignment
+git clone https://github.com/yanivNaor92/cloud-computing-k8s-assignment
+cd cloud-computing-k8s-assignment
 ``` 
 Note: Make sure to run the commands in the following tasks from the root directory of this repository (unless instructed otherwise).
 
@@ -106,7 +106,7 @@ You should see the application running.
 
 ### Step 1.6 - Scale out your application
 Currently, your Deployment is configured to create only one instance of your application.  
-You can create more replicas by running the following commnad:
+You can create more replicas by running the following command:
 ```shell
 kubectl scale deployment ecommerce-app --replicas=3
 ```
@@ -125,7 +125,7 @@ Execute the following command in your terminal:
 curl http://localhost:8080/api/podName
 ```
 The output should be the Pod's name that handled the request.  
-Execute it a few more times and observe how the reponse changes between each call.  
+Execute it a few more times and observe how the response changes between each call.  
 
 ## Task 2 - Deploying a Multi-Service Application with Kubernetes
 In this assignment, you will build upon your previous experience with Docker Compose by deploying the same multi-service application using Kubernetes. You will implement the Kubernetes equivalent of the architecture described in Assignment #2, ensuring high availability, scalability, and robustness of the application.  
@@ -208,13 +208,13 @@ Similar to assignment #1, you need to run **two** replicas of the stock service.
 **Unlike assignment #1**, both instances should listen to the same port. The user that calls the API of the stock service should not be aware of which instance handled the request. Each request should be load-balanced between the two instances.
 You need to ensure the responses are consistent no matter which instance handled the request.
 To implement this micro-service you need to create the following files:
-* `deployment.yaml` - YAML sepcification of the `Deployment` Kubernetes resource that describes the stock Pods. 
-* `service.yaml` - YAML sepcification of the `Service` Kubernetes resource that expose the stock pods to network traffic and load-balancing.
+* `deployment.yaml` - YAML specification of the `Deployment` Kubernetes resource that describes the stock Pods. 
+* `service.yaml` - YAML specification of the `Service` Kubernetes resource that expose the stock pods to network traffic and load-balancing.
 * `app.py` - The code implementation of the stocks container (assuming you use Python, adjust the file name if you use other programming languages). 
 * `Dockerfile` - The Dockerfile used to build the stocks image.
 
 ##### Capital Gains Service
-This micro-service is the same capital-gains service you implemented in assignments #2. It has to provide the same REST API and fulfill the same requirements as instructed in assignment #2.
+This micro-service is the same capital-gains service you implemented in assignment #2. It has to provide the same REST API and fulfill the same requirements as instructed in assignment #2.
 You need to run **one** replica of this service.  
 Unlike assignment #2, this service doesn't need to accept the `portfolio` query parameter. Instead, it will only communicate with the stock service, which loads balance the request to one of the instances. See [How to access a service in a Kubernetes](#how-to-access-a-service-in-a-kubernetes-cluster) for more details.  
 To implement this micro-service you need to create the following files:
@@ -224,10 +224,10 @@ To implement this micro-service you need to create the following files:
 * `Dockerfile` - The Dockerfile used to build the capital-gains image.
 
 ##### NGINX Service
-This micro-service is used as revers proxy for accessing the stocks service. (as done in assignment #2). A user from outside of the cluster interacts with this service only. The NGINX proxy should forward each request to the relevant service according to the request's path (e.g. `/stocks`, `/capital-gains`, etc.).  
+This micro-service is used as a reverse proxy for accessing the stocks service. (as done in assignment #2). A user from outside of the cluster interacts with this service only. The NGINX proxy should forward each request to the relevant service according to the request's path (e.g. `/stocks`, `/capital-gains`, etc.).  
 To implement this micro-service you need to create the following files:
 * `deployment.yaml` - YAML specification of the `Deployment` Kubernetes resource that describes the nginx Pod. 
-* `service.yaml` - YAML specification of the `Service` Kubernetes resource that expose the nginx pod to **external** network traffic (think which [Serivce type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) it needs to be).
+* `service.yaml` - YAML specification of the `Service` Kubernetes resource that exposes the nginx pod to **external** network traffic. Think which [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) it needs to be. Hint: take a look at the `kind-config.yaml` file.    
 * `configmap.yaml` - YAML specification of the `ConfigMap` Kubernetes resource that describes the nginx configurations.  
 You can find more information about using `ConfigMap` in this [section](#config-maps).
 
@@ -237,10 +237,10 @@ For each CRUD operation done by the stocks service, the data should be stored in
 Be aware that both instances write to the same database. You need to ensure they don't conflict with each other (for example, one instance tries to update a stock object when the other instance tries to delete the same object).  
 
 To implement this micro-service you need to create the following files:
-* `deployment.yaml` - YAML sepcification of the `Deployment` Kubernetes resource that describes the database Pod. 
-* `service.yaml` - YAML sepcification of the `Service` Kubernetes resource that expose the database pod to network traffic.  
-* `persistentVolume.yaml` - YAML sepcification of the `PersistentVolume` Kubernetes resource.  
-* `persistentVolumeClaim.yaml` - YAML sepcification of the `PersistentVolumeClaim` Kubernetes resource.  
+* `deployment.yaml` - YAML specification of the `Deployment` Kubernetes resource that describes the database Pod. 
+* `service.yaml` - YAML specification of the `Service` Kubernetes resource that exposes the database pod to network traffic.  
+* `persistentVolume.yaml` - YAML specification of the `PersistentVolume` Kubernetes resource.  
+* `persistentVolumeClaim.yaml` - YAML specification of the `PersistentVolumeClaim` Kubernetes resource.  
 You can find more information about `PersistentVolume` and `PersistentVolumeClaim` in this [section](#persistent-volumes).
 
 #### Step 2.3 - Build the Docker Images and Load them Into the Cluster
@@ -290,6 +290,7 @@ The output should look as follows:
 ```shell
 NAME                             READY   STATUS    RESTARTS   AGE
 stocks-6d967d75cb-72xrw          1/1     Running   0          11h
+stocks-6d967d75cb-ug84r          1/1     Running   0          11h
 capital-gains-1d947a758b-g7bjj   1/1     Running   0          11h
 nginx-5er68d65c9-tnsst           1/1     Running   0          11h
 mongo-2q93yd1514-tbasyn          1/1     Running   0          11h
@@ -297,8 +298,9 @@ mongo-2q93yd1514-tbasyn          1/1     Running   0          11h
 Note the `STATUS` column. If one of the `Pods` is not in the `Running` status, you should investigate what might cause it.  
 You can view the Pod's definition and its `status` by running the following command:
 ```shell
-kubectl get pods <pod-name> -n <namespace>
+kubectl get pods <pod-name> -n <namespace> -o yaml
 ```
+The `status` section usually contains useful information about the Pod's health and the error description (if it exists).  
 If the Pod's container prints any logs, you can view them by running the following command:
 ```shell
 kubectl logs <pod-name> -n <namespace> -c <container-name>
@@ -323,7 +325,7 @@ To validate that, perform the following steps:
    ```shell
    kubectl delete pod <pod-name> -n <namespace-name>
    ```
-5. Ensure a new database Pod was created and it's in the `RUNNING` status:
+5. Ensure a new database Pod was created and it's in the `Running` status:
    ```shell
    kubectl get pods -n <namespace-name>
    ```

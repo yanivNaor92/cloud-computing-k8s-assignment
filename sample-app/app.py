@@ -144,9 +144,6 @@ def get_pod_name():
 
 @app.route('/healthz')
 def healthz():
-    custom_readiness = os.getenv('CUSTOM_READINESS', 'ready')
-    if custom_readiness != 'ready':
-        return 'Service Unavailable', 503
     return 'OK', 200
 
 if __name__ == '__main__':

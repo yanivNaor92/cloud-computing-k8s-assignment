@@ -25,14 +25,3 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
-          env:
-            - name: CUSTOM_READINESS
-              value: "ready"
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 5000
-            initialDelaySeconds: 2
-            periodSeconds: 2
-            failureThreshold: 1
-            successThreshold: 1

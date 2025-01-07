@@ -202,6 +202,7 @@ cloud-computing-k8s-assignment/
 │   │   ├── service.yaml
 │   │   ├── configmap.yaml
 ```
+Note: The above file structure assumes you implement the code in Python. If you use a different programming language, adjust the code file name accordingly.  
 ##### Stocks Service
 This micro-service is the same stock service you implemented in assignments #1 and #2. It has to provide the same REST API and fulfill the same requirements as instructed in assignment #1.
 Similar to assignment #1, you need to run **two** replicas of the stock service.  

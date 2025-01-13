@@ -214,6 +214,8 @@ To implement this micro-service you need to create the following files:
 * `app.py` - The code implementation of the stocks container (assuming you use Python, adjust the file name if you use other programming languages). 
 * `Dockerfile` - The Dockerfile used to build the stocks image.
 
+Note: The stock service should use a NINJA API key. Ensure your API key is available for the service when the TA runs it (similar to assignment #1).  
+
 ##### Capital Gains Service
 This micro-service is the same capital-gains service you implemented in assignment #2. It has to provide the same REST API and fulfill the same requirements as instructed in assignment #2.
 You need to run **one** replica of this service.  
@@ -333,15 +335,51 @@ To validate that, perform the following steps:
 6. Invoke the `GET /stocks` API and view your stocks data. You should get the same list of stocks you got in step 2.  
 
 
+
 ### Submission
 * Submit a zip file containing all code, Dockerfiles and YAML manifests as mentioned in [step 2.2](#step-22---implement-the-micro-services).
+* Make sure your NINJA API key is included in the stocks service.  
 * If submitting the work as a team, please attach a document listing the team members.
+
+#### Test your Submission
+To run a basic sanity test of your work before submitting it, you should run the shell script in this repository.  
+The script ensures your files and folder structure are in the correct form as described in [step 2.2](#step-22---implement-the-micro-services).  
+The script perform the following actions:
+1. Creates a KIND cluster (the cluster is created with the name `test-submission`. Don't forget to delete it afterwards).  
+2. Build the Docker images of the `stocks` and `capital-gains` deployments. The tag of those images is extracted from the respective `deployment.yaml` file.  
+3. Deploy the K8s resources of each of the services into the created cluster.  
+4. Wait for all the Pods to reach the `Running` state.  
+5. Perform an HTTP request using the `curl` command to ensure the `stocks` and the `capital-gains` services are responsive.  
+
+Before running the test script, ensure that the `multi-service-app` folder, containing your submission is in the same folder as the test script.  
+Also, the `yq` command should be installed on your computer. You can download it from [here](https://github.com/mikefarah/yq/#install) (install v4.x of yq).  
+To run the script run the following command from your terminal:
+```shell
+bash test-submission.sh
+```
+The script may accept two **optional** arguments:
+```shell
+bash test-submission.sh --timeout 300 --skip-create-cluster
+```
+* `timeout`:  the number of seconds to wait until all Pods become running (default is 300).  
+* `skip-create-cluster`: skips the creation of the K8s cluster. This is useful if the script failed in the middle and you want to rerun it without creating the cluster again.  
+
+If everything works as expected, the script should complete without any errors, and the following messages should appear:  
+```text
+The sanity test for http://localhost:80/stocks passed successfully.
+The sanity test for http://localhost:80/capital-gains passed successfully.
+```
 
 ## Clean up
 To delete the kind cluster you created in this assignment run the following command:
 ```shell
-kind delete cluster
+kind delete cluster --name <cluster-name>
 ```
+To get the list of KIND clusters and to ensure the cluster is deleted, run the following command:
+```shell
+kind get clusters
+```
+
 # Appendices
 ## How to Access a Service in a Kubernetes Cluster
 When Pods within the same cluster need to communicate with each other, Kubernetes Services provide a stable endpoint.  
@@ -429,7 +467,7 @@ spec:
 * `ReadOnlyMany`: Read-only by multiple Pods.
 * `ReadWriteMany`: Read/write by multiple Pods.
 
-2. Define the PersistentVolumeClaim (PVC)
+2. Define the PersistentVolumeClaim (PVC)  
 A PVC is used by Pods to request storage from a PV.
 ```yaml
 apiVersion: v1
@@ -448,7 +486,7 @@ spec:
 * The `accessModes` in the PVC must match the PV’s `accessModes`.
 * The requested storage size (500Mi) must be less than or equal to the PV’s capacity.
 
-3. Use the PVC in a Pod
+3. Use the PVC in a Pod  
 Mount the PVC as a volume in the Pod to persist files.
 ```yaml
 apiVersion: v1
